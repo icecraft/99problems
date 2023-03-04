@@ -1,5 +1,8 @@
 
 
+import Data.List 
+
+
 -- Problem 1 
 -- Find the last element of a list 
 {-
@@ -28,8 +31,8 @@ myButLast  =  last . init
     element-at [1,2,4, 8, 16] 3 = 4
 -}
 
-element-at :: [a] -> init -> a 
-element-at s idx = s !! (idx -1 )
+elementAt :: [a] -> Int -> a 
+elementAt s idx = s !! (idx -1 )
 
 
 
@@ -40,7 +43,7 @@ element-at s idx = s !! (idx -1 )
     myLength "Hello, world!"
 -}
 
-myLength :: [a] -> int 
+myLength :: [a] -> Int 
 myLength = length 
  
 
@@ -60,7 +63,7 @@ myReverse = reverse
     isPalindrome [1,2,3] = False
 -}
 
-isPalindrome :: [a] -> Bool 
+isPalindrome :: Eq a => [a] -> Bool 
 isPalindrome s = s == reverse s 
 
 
@@ -88,13 +91,12 @@ flatten (List b) = concatMap flatten b
 
 compress81 :: Eq a => [a] -> [a] -> [a]
 compress81 [] ys = ys 
-compress81 x:xs [] = compress81 xs [x] 
-compress81 x:xs zs = if (last zs) == x 
+compress81 (x:xs) [] = compress81 xs [x] 
+compress81 (x:xs) zs = if (last zs) == x 
                         then compress81 xs zs 
-                     else compress81 xs zs:x
+                     else compress81 xs (zs ++ [x])
 
-
-compress :: [a] -> [a]
+compress :: Eq a => [a] -> [a]
 compress xs = compress81 xs []  -- 不知道有没有更好的解法 
 
 
@@ -105,25 +107,9 @@ compress xs = compress81 xs []  -- 不知道有没有更好的解法
     (pack '(a a a a b c c a a d e e e e)) =
         ((A A A A) (B) (C C) (A A) (D) (E E E E))
 -}
-data Pack91 a = Pack91None | Pack91S a | Pack91M a int 
 
-pack91 :: Eq a => [a] -> Pack91 a -> [Pack91 a] -> [Pack91 a]
-pack91 [] p@(Pack91S _) res = res ++ [p]
-pack91 [] p@(Pack91M _ _) res = res ++ [p]
-pack91 x:xs p res = case p of 
-                        Pack91None -> pack91 xs (Pack91 x) res 
-                        y@(Pack91S v) -> if v == x then 
-                                            pack91 xs (Pack91M v 2) res 
-                                          else pack91 xs (Pack91S x) (res ++ [y])
-                        y@(Pack91M v count) -> if v == x then 
-                                               pack91 xs (Pack91M v count+1) res 
-                                            else pack91 xs (Pack91S x) (res ++ [y])
 pack :: Eq a => [a] -> [[a]]
-pack xs = render $ pack91 xs Pack91None []
-        where 
-            render = map . render2
-            render2 (Pack91S x) = [x]
-            render2 (Pack91M x c) =  take c $ repeat x 
+pack = group 
 
 -- too ugly have any good suggesions ？
 
@@ -136,5 +122,7 @@ pack xs = render $ pack91 xs Pack91None []
     (encode '(a a a a b c c a a d e e e e)) = 
         ((4 A) (1 B) (2 C) (2 A) (1 D)(4 E))
 -}
-encode = TODO 
+encode y = map (\x -> ( length x, head x)) $ group ys
+
+            
 
