@@ -1,5 +1,7 @@
 
--- import System.Random
+import System.Random
+import Data.List 
+import Control.Monad 
 
 
 -- Problem 21 
@@ -25,7 +27,7 @@ range :: Int -> Int -> [Int]
 range s e = take (e -s + 1) [s..]
 
 
-{-
+
 -- Problem 23 
 -- Extract a given number of randomly selected elements from a list
 {-
@@ -36,8 +38,9 @@ range s e = take (e -s + 1) [s..]
 rnd_select :: [a] -> Int -> IO [a]
 rnd_select candidates count = do 
                 g <- getStdGen 
-                rs <- replicateM count $  (randomRs (0, length candidates-1) g)
-                return $ map (candidates !! ) rs 
+                return $ take count [ candidates !! pos   | pos <- (randomRs (0, length candidates-1) g)] 
+
+
 
 -- Problem 24 
 -- Lotto: Draw N different random numbers from the set 1..M.
@@ -47,8 +50,10 @@ rnd_select candidates count = do
         (23 1 17 33 21 37)
 -}
 
-diff_select :: Int -> Int -> [Int]
-diff_select = TODO 
+diff_select :: Int -> Int -> IO [Int]
+diff_select c mn = do
+            g <- getStdGen 
+            return . take c . nub $ (randomRs (0, mn) g) 
 
 
 
@@ -59,10 +64,13 @@ diff_select = TODO
     =
         (B A D C E F)
 -}
-rnd_permu :: [a] -> [a]
-rnd_permu = TODO 
+rnd_permu :: [a] -> IO [a]
+rnd_permu xs = do
+            poses <- diff_select (length xs) ((length xs) -1) 
+            return $ [ xs !! p | p <- poses]
 
--}
+
+
 
 -- Problem 26 
 -- Generate the combinations of K distinct objects chosen from the N elements of a list
@@ -71,6 +79,7 @@ rnd_permu = TODO
     =
         ((A B C) (A B D) (A B E) ... )
 -}
+{- My Ugly Solutions 
 combinations :: Int -> [a] -> [[a]]
 combinations 0 _ = [] 
 combinations c p@(y:ys) = if length p == c 
@@ -83,6 +92,12 @@ combinations c p@(y:ys) = if length p == c
                                         else (combinations c ys) ++ [  y: ll | ll <- combinations (c-1) ys ]
                                 else []
 
+-}
+-- Just Copy 
+combinations :: Int -> [a] -> [[a]]
+combinations 0 _  = [[]]
+combinations n xs = [ y:ys | y:xs' <- tails xs
+                           , ys <- combinations (n-1) xs']
 
 
 -- Problem 27 
@@ -94,12 +109,24 @@ combinations c p@(y:ys) = if length p == c
         ... )
 -}
 
-group27 :: [Int] -> [a] -> [[a]]
-group27 =  TODO
+-- Mark: Just Copy From Someone 
+
+combinations2 :: Int -> [a] -> [([a], [a])]
+combinations2 0 xs  = [([], xs)]
+combinations2 n [] = []
+combinations2 n (x:xs) = ts ++ ds 
+        where 
+            ts = [(x:ys, zs) | (ys, zs) <- combinations2 (n-1) xs]
+            ds = [(ys, x:zs) | (ys, zs) <- combinations2  n xs] 
+
+
+group27 :: [Int] -> [a] -> [[[a]]]
+group27 [] _ = [[]]
+group27 (c:cs) xs = [  ys:ts   | (ys, zs) <- combinations2 c xs
+                                , ts <- group27 cs zs]
 
 
 
-{-
 -- Problem 28 
 -- Sorting a list of lists according to length of sublists
 {-
@@ -107,12 +134,15 @@ group27 =  TODO
     =
         ((O) (D E) (D E) (M N) (A B C) (F G H) (I J K L))
 -}
-lsort :: Ord a => [a] -> [a] 
-lsort = TODO 
+
+lsort ::  [[a]] -> [[a]] 
+lsort = sortBy (\x y -> compare (length x) (length y))
 
 
--}
 
-
+lfsort ::  [[a]] -> [[a]]
+lfsort = concat . gg
+    where 
+        gg = groupBy (\x y -> length x == length y) . sortBy (\x y -> compare (length y) (length x)) 
 
 
