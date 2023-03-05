@@ -7,10 +7,22 @@
     = 
         true 
 -}
+_prime :: Int -> Int -> [Int] -> [Int]
+_Prime 1 _ _  = []
+_prime 2 _ _  = [2]
+_prime n inc xs = if inc > n 
+                    then xs 
+                  else  
+                    case all (\x -> mod inc x > 0) xs of 
+                        True -> _prime n (inc+2) (inc:xs) 
+                        False -> _prime n (inc+2) xs 
+
 
 isPrime :: Int -> Bool
-isPrime = errors "todo"
-
+isPrime n 
+        | 0 >= n = False 
+        | otherwise = let ll = _prime n 3 [2] 
+                    in (head ll) == n
 
 
 -- Problem 32 
@@ -21,8 +33,10 @@ isPrime = errors "todo"
         9
 -}
 myGCD :: Int -> Int -> Int 
-myGCD = errors "Todo"
-
+myGCD a b = let (x, y) = (max a b, min a b)
+            in  if y > 0
+                    then myGCD y $ mod x y
+                    else x 
 
 
 -- Problem 33 
@@ -33,8 +47,7 @@ myGCD = errors "Todo"
         true 
 -}
 coprime :: Int -> Int -> Bool
-coprime = errors "todo"
-
+coprime x y = 1 == myGCD x y 
 
 
 -- Problem 34 
@@ -49,7 +62,7 @@ coprime = errors "todo"
         4
 -}
 totient :: Int -> Int 
-totient = errors "todo"
+totient n = foldr (\x r -> if coprime x n then r +1 else r ) 0 [1..n-1]
 
 
 
@@ -60,9 +73,17 @@ totient = errors "todo"
     = 
         ( 3 3 5 7)
 -}
-primeFactors :: Int -> [Int]
-primeFactors = errors "TODO"
+dofactors :: Int -> [Int] -> [Int]
+dofactors n xs = let candiates = _prime (ceiling $ sqrt n) 3 [2]
+                in filter (\x -> mod n x == 0) candiates 
+                
 
+primeFactors :: Int -> [Int]
+primeFactors n =  
+                  
+
+
+{-
 
 
 -- Problem 36 
@@ -107,7 +128,7 @@ primeFM = errors "TODO"
 
 -}
 
-primes$ :: Int -> Int -> [Int]
+primesR :: Int -> Int -> [Int]
 primesR = errors "todo"
 
 
@@ -142,8 +163,5 @@ goldbachsR = errors "todo"
 
 
 
-
-
-
-
+-}
 
