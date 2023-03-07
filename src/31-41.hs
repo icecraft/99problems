@@ -1,5 +1,8 @@
 
 
+import Data.List 
+
+
 -- Problem 31 
 -- Check whether a given number is prime 
 {-
@@ -73,17 +76,15 @@ totient n = foldr (\x r -> if coprime x n then r +1 else r ) 0 [1..n-1]
     = 
         ( 3 3 5 7)
 -}
-dofactors :: Int -> [Int] -> [Int]
-dofactors n xs = let candiates = _prime (ceiling $ sqrt n) 3 [2]
-                in filter (\x -> mod n x == 0) candiates 
+dofactors :: Int -> [Int] -> [Int] -> [Int]
+dofactors _ [] res = res
+dofactors n xs res = let cs = filter (\x -> mod n x == 0) xs
+                    in dofactors (div n $ product cs) (filter (\x -> n >=x ) xs) (cs ++ res)
                 
 
 primeFactors :: Int -> [Int]
-primeFactors n =  
+primeFactors n =  dofactors n  (_prime n 3 [2] ) []
                   
-
-
-{-
 
 
 -- Problem 36 
@@ -94,7 +95,9 @@ primeFactors n =
         ((3 2) (5 1) (7 1))
 -}
 primeFM :: Int -> [(Int, Int)]
-primeFM = errors "TODO"
+primeFM = map convert . groupBy (\a b -> a == b) . sort . primeFactors 
+        where 
+            convert xs = (head xs, length xs)
 
 
 
@@ -108,13 +111,13 @@ primeFM = errors "TODO"
     Then phi(m) can be calculated with the following formula: 
 
 -}
-
+-- TODO
 
 
 -- Problem 38 
 --  Compare the two methods of calculating Euler's totient function. 
 
-
+-- TODO
 
 -- Problem 39
 --  A list of prime numbers. 
@@ -129,7 +132,9 @@ primeFM = errors "TODO"
 -}
 
 primesR :: Int -> Int -> [Int]
-primesR = errors "todo"
+primesR lower upper = filter (\x -> x > lower && upper > x ) $ _prime upper 3 [2]
+
+
 
 
 -- Problem 40 
@@ -140,8 +145,11 @@ primesR = errors "todo"
         (5  23)
 
 -}
-goldbach :: Int -> [Int]
-goldbach = errors "todo"
+goldbach :: Int -> (Int, Int)
+goldbach n = convert . head $  filter (\x -> isPrime $ n - x ) primes
+    where 
+        primes = _prime n 3 [2]
+        convert x = (x, n -x)
 
 
 
@@ -159,9 +167,8 @@ goldbach = errors "todo"
         20 = 3 + 17
 -}
 goldbachsR :: Int -> Int -> [(Int, Int)]
-goldbachsR = errors "todo"
+goldbachsR lower upper = map goldbach $ filter (\x -> mod x 2 == 0) [lower .. upper]
 
 
 
--}
 
