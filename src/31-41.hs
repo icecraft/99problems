@@ -21,6 +21,10 @@ _prime n inc xs = if inc > n
                         False -> _prime n (inc+2) xs 
 
 
+primeR :: Int -> [Int] 
+primeR n = _prime n 3 [2]
+
+
 isPrime :: Int -> Bool
 isPrime n 
         | 0 >= n = False 
