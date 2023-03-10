@@ -157,9 +157,10 @@ buildHuffmanTree xs
                               in buildHuffmanTree (HTB freq (fstE, sndE):rest)
       
 encodeHuffmanTree :: HuffmanTree -> [(Char, String)]
-encodeHuffmanTree = concatMap (render "")  
+encodeHuffmanTree = render "" 
         where 
-            render prefix 
+            render prefix (HTB _ (a, b)) = (render (prefix ++ "0") a) ++ (render (prefix ++ "1") b) 
+            render prefix (HTS c _) = [(c, prefix)]
 
 
 -- (getHuffmanC le, prefix ++ "0"):(encode (prefix ++ "1")  (extractHuffmanTree $ head ys ))
