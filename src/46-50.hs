@@ -115,21 +115,54 @@ gray n = ts ++ ds
         
 
 
-
-
 -- Problem 50
 -- Huffman codes. 
 {-
-    huffman(Fs,Hs) :- Hs is the Huffman code table for the frequency table Fs
+     huffman [('a',45),('b',13),('c',12),('d',16),('e',9),('f',5)]
+     =
+	[('a',"0"),('b',"101"),('c',"100"),('d',"111"),('e',"1101"),('f',"1100")]    
 -}
 
 
+data HuffmanTree =  HTS Char Int | HTL Char | HTB Int (HuffmanTree, HuffmanTree) deriving (Show)
+
+getHuffmanFreq :: HuffmanTree -> Int 
+getHuffmanFreq (HTS _ c) = c
+getHuffmanFreq (HTL _) = 0
+getHuffmanFreq (HTB c _) = c
+
+getHuffmanC :: HuffmanTree -> Char 
+getHuffmanC (HTS c _) = c 
+getHuffmanC (HTL c) = c 
+getHuffmanC _ = '@'
 
 
+extractHuffmanTree :: HuffmanTree -> [HuffmanTree]
+extractHuffmanTree (HTB _ (a ,b)) = [a, b]
+extractHuffmanTree _ =[]
+
+convertToHuffmanT :: [(Char, Int)] -> [HuffmanTree]
+convertToHuffmanT = map  conv 
+        where conv (ch, c) = HTS ch c 
 
 
+buildHuffmanTree :: [HuffmanTree] -> HuffmanTree 
+buildHuffmanTree xs
+                | 2 > length xs = head xs
+                | otherwise = let sxs = sortOn getHuffmanFreq xs 
+                                  fstE = head sxs 
+                                  sndE = head $ tail sxs 
+                                  rest = tail $ tail sxs
+                                  freq = (getHuffmanFreq fstE) + (getHuffmanFreq sndE)
+                              in buildHuffmanTree (HTB freq (fstE, sndE):rest)
+      
+encodeHuffmanTree :: HuffmanTree -> [(Char, String)]
+encodeHuffmanTree = concatMap (render "")  
+        where 
+            render prefix 
 
 
+-- (getHuffmanC le, prefix ++ "0"):(encode (prefix ++ "1")  (extractHuffmanTree $ head ys ))
 
 
 
