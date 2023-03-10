@@ -163,7 +163,6 @@ encodeHuffmanTree = render ""
             render prefix (HTS c _) = [(c, prefix)]
 
 
--- (getHuffmanC le, prefix ++ "0"):(encode (prefix ++ "1")  (extractHuffmanTree $ head ys ))
 
 
 
