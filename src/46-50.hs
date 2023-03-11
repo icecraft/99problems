@@ -162,24 +162,3 @@ encodeHuffmanTree = render ""
             render prefix (HTB _ (a, b)) = (render (prefix ++ "0") a) ++ (render (prefix ++ "1") b) 
             render prefix (HTS c _) = [(c, prefix)]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
