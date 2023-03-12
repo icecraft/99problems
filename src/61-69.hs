@@ -61,6 +61,16 @@ nnodes :: Tree a -> Int
 nnodes Empty = 0
 nnodes (Branch _ a b) = 1 + (nnodes a) + (nnodes b) 
 
+llevel :: Tree a -> Int 
+llevel Empty = 0
+llevel (Branch _ a _) = lnnodes a + 1
+
+
+treeLevel :: Tree Char -> Int 
+treeLevel Empty = 0 
+treeLevel (Branch _ a b) = (+ 1) $ max (leftChildLevel a) (leftChildLevel b)
+
+
 -- Problem 61
 -- Count the leaves of a binary tree
 {-
@@ -142,7 +152,17 @@ layout64 t = _layout 0 1 t
 {-
 -- Problem 65
 -}
+
+
+
 layout65 :: Tree Char -> Tree (Char, (Int, Int))
+layout65 Empty = Empty
+layout65 t = _layout 0 level t 
+        where 
+                level = treeLevel t
+                _layout _ _ Empty = Empty 
+                _layout bias depth (Branch v left right) = 
+                        Branch (v, (bias + 1 + nnodes left, depth)) (_layout bias (succ depth ) left)  (_layout (bias+1 + nnodes left) (succ depth) right) 
 
 
 
