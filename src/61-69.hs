@@ -8,6 +8,59 @@ tree4 = Branch 1 (Branch 2 Empty (Branch 4 Empty Empty))
                  (Branch 2 Empty Empty)
 
 
+tree64 = Branch 'n'
+                (Branch 'k'
+                        (Branch 'c'
+                                (Branch 'a' Empty Empty)
+                                (Branch 'h'
+                                        (Branch 'g'
+                                                (Branch 'e' Empty Empty)
+                                                Empty
+                                        )
+                                        Empty
+                                )
+                        )
+                        (Branch 'm' Empty Empty)
+                )
+                (Branch 'u'
+                        (Branch 'p'
+                                Empty
+                                (Branch 's'
+                                        (Branch 'q' Empty Empty)
+                                        Empty
+                                )
+                        )
+                        Empty
+                )
+
+
+
+tree65 = Branch 'n'
+                (Branch 'k'
+                        (Branch 'c'
+                                (Branch 'a' Empty Empty)
+                                (Branch 'e'
+                                        (Branch 'd' Empty Empty)
+                                        (Branch 'g' Empty Empty)
+                                )
+                        )
+                        (Branch 'm' Empty Empty)
+                )
+                (Branch 'u'
+                        (Branch 'p'
+                                Empty
+                                (Branch 'q' Empty Empty)
+                        )
+                        Empty
+                )
+
+
+
+
+nnodes :: Tree a -> Int 
+nnodes Empty = 0
+nnodes (Branch _ a b) = 1 + (nnodes a) + (nnodes b) 
+
 -- Problem 61
 -- Count the leaves of a binary tree
 {-
@@ -73,21 +126,28 @@ completeBinaryTree n = generate 1
             generate m  | m > n = Empty 
                         | otherwise = Branch 'x' (generate $ 2*m) (generate $ 2*m + 1)
 
-{-
 
-{-
+
+
 -- Problem 64 
-
--}
+-- TODO: not correct !!
+layout64 :: Tree Char -> Tree (Char, (Int, Int))
+layout64 t = _layout 0 1 t 
+        where 
+            _layout _ _ Empty = Empty
+            _layout bias depth (Branch v left right) = Branch (v, (bias + 1 + nnodes left, depth)) (_layout bias (succ depth ) left)  (_layout (bias+1 + nnodes left) (succ depth) right)  
 
 
 
 {-
 -- Problem 65
 -}
+layout65 :: Tree Char -> Tree (Char, (Int, Int))
 
 
 
+
+{-
 {-
 -- Problem 66 
 -}
@@ -102,7 +162,7 @@ completeBinaryTree n = generate 1
     stringToTree "x(y,a(,b))" >>= print
     =
     Branch 'x' (Branch 'y' Empty Empty) (Branch 'a' Empty (Branch 'b' Empty Empty))
--}
+
 findP :: String -> Int 
 findP = findP1 0 0 
     where 
@@ -121,9 +181,8 @@ stringToTree s = case length s of
                          pos = findP pos 
                         (left, right) = splitAt pos 
                     in Branch (s !! 0) (stringToTree left) (stringToTree righjt) 
-                       
-                
-
+                                     
+-}
 
 
 -- Problem 68 
