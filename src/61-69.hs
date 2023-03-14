@@ -63,12 +63,12 @@ nnodes (Branch _ a b) = 1 + (nnodes a) + (nnodes b)
 
 llevel :: Tree a -> Int 
 llevel Empty = 0
-llevel (Branch _ a _) = lnnodes a + 1
+llevel (Branch _ a _) = llevel a + 1
 
 
 treeLevel :: Tree Char -> Int 
 treeLevel Empty = 0 
-treeLevel (Branch _ a b) = (+ 1) $ max (leftChildLevel a) (leftChildLevel b)
+treeLevel (Branch _ a b) = (+ 1) $ max (treeLevel a) (treeLevel b)
 
 
 -- Problem 61
@@ -153,18 +153,16 @@ layout64 t = _layout 0 1 t
 -- Problem 65
 -}
 
-
-
 layout65 :: Tree Char -> Tree (Char, (Int, Int))
 layout65 Empty = Empty
 layout65 t = _layout 0 level t 
         where 
-                level = treeLevel t
-                _layout _ _ Empty = Empty 
-                _layout bias depth (Branch v left right) = 
-                        Branch (v, (bias + 1 + nnodes left, depth)) (_layout bias (succ depth ) left)  (_layout (bias+1 + nnodes left) (succ depth) right) 
-
-
+                level = treeLevel t 
+                _layout _ _ Empty = Empty
+                _layout bias depth (Branch v left right) = let x = 2 ^ (depth -1) - 2 ^ (depth -  (llevel left) -1) + 1 + bias
+			     	   	     	  	 in (Branch (v, (x, level- depth + 1 )) (_layout bias (pred depth) left) (_layout x (pred depth) right))
+										
+		
 
 
 {-
@@ -208,8 +206,7 @@ stringToTree s = case length s of
 -- Problem 68 
 -- Preorder and inorder sequences of binary trees. We consider binary trees with nodes that are identified by single lower-case letters, 
 -- as in the example of problem P67.
-{-
--}
+
 
 
 {-
